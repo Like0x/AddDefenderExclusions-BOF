@@ -1,0 +1,17 @@
+BOFNAME := AddDefenderExclusions
+
+CC_x64 := x86_64-w64-mingw32-g++
+CC_x86 := i686-w64-mingw32-g++
+STRIP_x86 := i686-w64-mingw32-strip
+STRIP_x64 := x86_64-w64-mingw32-strip
+
+all:
+	$(CC_x64) -Wno-write-strings -o $(BOFNAME).x64.o -c $(BOFNAME).c -masm=intel
+	$(STRIP_x64) --strip-unneeded $(BOFNAME).x64.o
+
+	$(CC_x86) -Wno-write-strings -o $(BOFNAME).x86.o -c $(BOFNAME).c -masm=intel
+	$(STRIP_x86) --strip-unneeded $(BOFNAME).x86.o
+
+clean:
+	rm -f ../dist/$(BOFNAME).x64.o
+	rm -f ../dist/$(BOFNAME).x86.o
